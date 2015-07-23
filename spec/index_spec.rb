@@ -5,10 +5,6 @@ describe FyberChallenge do
     @app ||= FyberChallenge
   end
 
-  it 'should assert true' do
-    expect(true).to be true
-  end
-
   describe 'GET /' do
     it 'should allow accessing the home page' do
       get '/'

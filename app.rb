@@ -7,7 +7,7 @@ require 'sinatra/json'
 require 'json'
 require 'sinatra/config_file'
 require 'em/pure_ruby'
-require 'helpers/application_helper'
+require './helpers/application_helper'
 require 'digest'
 
 # require the app directory
@@ -17,13 +17,11 @@ Dir[File.dirname(__FILE__) + '/controllers/*.rb'].each { |file| require file }
 class FyberChallenge < Sinatra::Base
   register Sinatra::ConfigFile
   register Sinatra::Reloader
-config_file './config.yml'
   # helpers
   helpers Sinatra::JSON
   helpers Sinatra::ApplicationHelper
 
-  def hash_key(hash)
-  end
+  config_file './config.yml'
 
   def generate_query_string(hash)
     hash.sort.map do |key, value|
@@ -43,7 +41,11 @@ config_file './config.yml'
   end
 
   post '/generate' do
-    if simbolize_keys(params).map { |_k,value| value.empty? }.all?
+    if params.empty?
+      return json success: false, error: 'No parameters were sent'
+    end
+
+    if params.map { |_k, value| value.empty? }.any?
       return json success: false, error: 'Please fill all the required values'
     end
     query_string = generate_query_string({
