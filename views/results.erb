@@ -1,0 +1,15 @@
+var item = '', table = $('.table-hover');
+table.find('tr').remove();
+
+<% if @response_body['code'] == 'OK' %>
+    $('.messages').html('<%=message('success', "Found a total of #{@response_body['pages']} pages, showing the first #{@response_body['count']} results."  ) %>').removeClass('hidden');
+    item += '<tr><th>#</th><th>Title</th><th>Thumbnail</th><th>Payout</th></tr>'
+    <% @response_body['offers'].each_with_index do |offer, index| %>
+        item += '<tr><td><%=index + 1%></td><td><%= offer['title'] %></td><td><img src="<%= offer['thumbnail']['lowres'] %>"></td><td><%= offer['payout'] %></td></tr>';
+    <% end %>
+    table.append(item);
+<% elsif @response_body['code'] == 'NO_CONTENT' %>
+    $('.messages').html('<%=message('info', @response_body['message']) %>').removeClass('hidden');
+<% else %>
+    $('.messages').html('<%=message('danger', @response_body['message']) %>').removeClass('hidden');
+<% end %>
